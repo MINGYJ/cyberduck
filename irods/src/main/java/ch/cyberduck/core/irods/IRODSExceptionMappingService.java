@@ -32,12 +32,13 @@ import org.irods.jargon.core.exception.FileNotFoundException;
 import org.irods.jargon.core.exception.InvalidGroupException;
 import org.irods.jargon.core.exception.InvalidUserException;
 import org.irods.jargon.core.exception.JargonException;
+import org.irods.irods4j.low_level.api.IRODSException;
 
-public class IRODSExceptionMappingService extends AbstractExceptionMappingService<JargonException> {
+public class IRODSExceptionMappingService extends AbstractExceptionMappingService<IRODSException> {
     private static final Logger log = LogManager.getLogger(IRODSExceptionMappingService.class);
 
     @Override
-    public BackgroundException map(final JargonException e) {
+    public BackgroundException map(final IRODSException e) {
         log.warn("Map failure {}", e.toString());
         final StringBuilder buffer = new StringBuilder();
         this.append(buffer, e.getMessage());

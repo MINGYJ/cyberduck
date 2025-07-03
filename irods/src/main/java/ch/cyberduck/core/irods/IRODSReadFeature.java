@@ -26,6 +26,11 @@ import ch.cyberduck.core.io.StreamCopier;
 import ch.cyberduck.core.transfer.TransferStatus;
 import ch.cyberduck.core.worker.DefaultExceptionMappingService;
 
+import org.irods.irods4j.high_level.connection.IRODSConnection;
+import org.irods.irods4j.high_level.io.IRODSDataObjectInputStream;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
+import org.irods.irods4j.low_level.api.IRODSApi.RcComm;
+import org.irods.irods4j.low_level.api.IRODSException;
 import org.irods.jargon.core.exception.JargonException;
 import org.irods.jargon.core.exception.JargonRuntimeException;
 import org.irods.jargon.core.pub.IRODSFileSystemAO;
@@ -33,6 +38,7 @@ import org.irods.jargon.core.pub.io.IRODSFile;
 import org.irods.jargon.core.pub.io.IRODSFileFactory;
 import org.irods.jargon.core.pub.io.PackingIrodsInputStream;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public class IRODSReadFeature implements Read {
@@ -45,31 +51,55 @@ public class IRODSReadFeature implements Read {
 
     @Override
     public InputStream read(final Path file, final TransferStatus status, final ConnectionCallback callback) throws BackgroundException {
-        try {
-            try {
-                final IRODSFileSystemAO fs = session.getClient();
-                final IRODSFileFactory factory = fs.getIRODSFileFactory();
-                final IRODSFile f = factory.instanceIRODSFile(file.getAbsolute());
-                if(f.exists()) {
-                    final InputStream in = new PackingIrodsInputStream(factory.instanceIRODSFileInputStream(f));
-                    if(status.isAppend()) {
-                        return StreamCopier.skip(in, status.getOffset());
-                    }
-                    return in;
+//    	 try {
+//             try {
+//                 final IRODSConnection client = session.getClient();
+//                 final IRODSFileFactory factory = fs.getIRODSFileFactory();
+//                 final IRODSFile f = factory.instanceIRODSFile(file.getAbsolute());
+//                 if(f.exists()) {
+//                     final InputStream in = new PackingIrodsInputStream(factory.instanceIRODSFileInputStream(f));
+//                     if(status.isAppend()) {
+//                         return StreamCopier.skip(in, status.getOffset());
+//                     }
+//                     return in;
+//                 }
+//                 else {
+//                     throw new NotfoundException(file.getAbsolute());
+//                 }
+//             }
+//             catch(JargonRuntimeException e) {
+//                 if(e.getCause() instanceof JargonException) {
+//                     throw (JargonException) e.getCause();
+//                 }
+//                 throw new DefaultExceptionMappingService().map(e);
+//             }
+//         }
+//         catch(JargonException e) {
+//             throw new IRODSExceptionMappingService().map("Download {0} failed", e, file);
+//         }
+     	
+    		try {
+            	final RcComm rcComm = session.getClient().getRcComm();
+                final String logicalPath = file.getAbsolute(); // e.g., "/zone/home/user/file.txt"
+                
+                if (!IRODSFilesystem.exists(rcComm, logicalPath)) {
+                    throw new NotfoundException(logicalPath);
                 }
-                else {
-                    throw new NotfoundException(file.getAbsolute());
+                
+                // Open input stream
+                InputStream in = new IRODSDataObjectInputStream(rcComm,logicalPath);
+
+                // If resuming from offset, skip ahead
+                if(status.isAppend() && status.getOffset() > 0) {
+                    in.skip(status.getOffset());
                 }
+
+                return in;
             }
-            catch(JargonRuntimeException e) {
-                if(e.getCause() instanceof JargonException) {
-                    throw (JargonException) e.getCause();
-                }
-                throw new DefaultExceptionMappingService().map(e);
+            catch(IOException | IRODSException e) {
+                //throw new IRODSExceptionMappingService().map("Download {0} failed", e, file);
             }
-        }
-        catch(JargonException e) {
-            throw new IRODSExceptionMappingService().map("Download {0} failed", e, file);
-        }
+            return null;
+        
     }
 }
