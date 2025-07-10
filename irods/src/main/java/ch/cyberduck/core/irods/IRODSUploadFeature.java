@@ -38,6 +38,10 @@ import ch.cyberduck.core.transfer.TransferStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.irods.irods4j.high_level.connection.IRODSConnection;
+import org.irods.irods4j.high_level.io.IRODSDataObjectOutputStream;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
+import org.irods.irods4j.low_level.api.IRODSException;
 import org.irods.jargon.core.checksum.ChecksumValue;
 import org.irods.jargon.core.exception.JargonException;
 import org.irods.jargon.core.packinstr.TransferOptions;
@@ -49,6 +53,8 @@ import org.irods.jargon.core.transfer.DefaultTransferControlBlock;
 import org.irods.jargon.core.transfer.TransferControlBlock;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 
 public class IRODSUploadFeature implements Upload<Checksum> {
@@ -65,49 +71,61 @@ public class IRODSUploadFeature implements Upload<Checksum> {
                            final ProgressListener progress, final StreamListener streamListener, final TransferStatus status,
                            final ConnectionCallback callback) throws BackgroundException {
         try {
-            final IRODSFileSystemAO fs = session.getClient();
-            final IRODSFile f = fs.getIRODSFileFactory().instanceIRODSFile(file.getAbsolute());
-            final TransferControlBlock block = DefaultTransferControlBlock.instance(StringUtils.EMPTY,
-                    HostPreferencesFactory.get(session.getHost()).getInteger("connection.retry"));
-            final TransferOptions options = new DefaultTransferOptionsConfigurer().configure(new TransferOptions());
-            if(Host.TransferType.unknown.equals(session.getHost().getTransferType())) {
-                options.setUseParallelTransfer(Host.TransferType.valueOf(PreferencesFactory.get().getProperty("queue.transfer.type")).equals(Host.TransferType.concurrent));
+        	 final boolean truncate = true;
+             final boolean append = false;
+//            final IRODSFileSystemAO fs = session.getClient();
+//            final IRODSFile f = fs.getIRODSFileFactory().instanceIRODSFile(file.getAbsolute());
+//            final TransferControlBlock block = DefaultTransferControlBlock.instance(StringUtils.EMPTY,
+//                    HostPreferencesFactory.get(session.getHost()).getInteger("connection.retry"));
+//            final TransferOptions options = new DefaultTransferOptionsConfigurer().configure(new TransferOptions());
+//            if(Host.TransferType.unknown.equals(session.getHost().getTransferType())) {
+//                options.setUseParallelTransfer(Host.TransferType.valueOf(PreferencesFactory.get().getProperty("queue.transfer.type")).equals(Host.TransferType.concurrent));
+//            }
+//            else {
+//               options.setUseParallelTransfer(session.getHost().getTransferType().equals(Host.TransferType.concurrent));
+//            }
+//            block.setTransferOptions(options);
+//            final DataTransferOperations transfer = fs.getIRODSAccessObjectFactory().getDataTransferOperations(fs.getIRODSAccount());
+//            transfer.putOperation(new File(local.getAbsolute()), f, new DefaultTransferStatusCallbackListener(
+//                    status, streamListener, block
+//            ), block);
+//            if(status.isComplete()) {
+//                final DataObjectChecksumUtilitiesAO checksum = fs
+//                    .getIRODSAccessObjectFactory()
+//                    .getDataObjectChecksumUtilitiesAO(fs.getIRODSAccount());
+//                final ChecksumValue value = checksum.computeChecksumOnDataObject(f);
+//                final Checksum fingerprint = Checksum.parse(value.getChecksumStringValue());
+//                if(null == fingerprint) {
+//                    log.warn("Unsupported checksum algorithm {}", value.getChecksumEncoding());
+//                }
+//                else {
+//                    if(file.getType().contains(Path.Type.encrypted)) {
+//                        log.warn("Skip checksum verification for {} with client side encryption enabled", file);
+//                    }
+//                    else {
+//                        final Checksum expected = ChecksumComputeFactory.get(fingerprint.algorithm).compute(local.getInputStream(), new TransferStatus(status));
+//                        if(!expected.equals(fingerprint)) {
+//                            throw new ChecksumException(MessageFormat.format(LocaleFactory.localizedString("Upload {0} failed", "Error"), file.getName()),
+//                                MessageFormat.format("Mismatch between {0} hash {1} of uploaded data and ETag {2} returned by the server",
+//                                    fingerprint.algorithm.toString(), expected, fingerprint.hash));
+//                        }	
+//                    }
+//                }
+        	final IRODSConnection conn=session.getClient();
+        	var out = new IRODSDataObjectOutputStream();
+        	InputStream localIn = local.getInputStream();
+        	out.open(session.getClient().getRcComm(), file.getAbsolute(), truncate, append);
+        	byte[] buffer = new byte[PreferencesFactory.get().getInteger("connection.chunksize")]; //buffer
+            int bytesRead;
+            while ((bytesRead = localIn.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
             }
-            else {
-                options.setUseParallelTransfer(session.getHost().getTransferType().equals(Host.TransferType.concurrent));
-            }
-            block.setTransferOptions(options);
-            final DataTransferOperations transfer = fs.getIRODSAccessObjectFactory().getDataTransferOperations(fs.getIRODSAccount());
-            transfer.putOperation(new File(local.getAbsolute()), f, new DefaultTransferStatusCallbackListener(
-                    status, streamListener, block
-            ), block);
-            if(status.isComplete()) {
-                final DataObjectChecksumUtilitiesAO checksum = fs
-                    .getIRODSAccessObjectFactory()
-                    .getDataObjectChecksumUtilitiesAO(fs.getIRODSAccount());
-                final ChecksumValue value = checksum.computeChecksumOnDataObject(f);
-                final Checksum fingerprint = Checksum.parse(value.getChecksumStringValue());
-                if(null == fingerprint) {
-                    log.warn("Unsupported checksum algorithm {}", value.getChecksumEncoding());
-                }
-                else {
-                    if(file.getType().contains(Path.Type.encrypted)) {
-                        log.warn("Skip checksum verification for {} with client side encryption enabled", file);
-                    }
-                    else {
-                        final Checksum expected = ChecksumComputeFactory.get(fingerprint.algorithm).compute(local.getInputStream(), new TransferStatus(status));
-                        if(!expected.equals(fingerprint)) {
-                            throw new ChecksumException(MessageFormat.format(LocaleFactory.localizedString("Upload {0} failed", "Error"), file.getName()),
-                                MessageFormat.format("Mismatch between {0} hash {1} of uploaded data and ETag {2} returned by the server",
-                                    fingerprint.algorithm.toString(), expected, fingerprint.hash));
-                        }
-                    }
-                }
-                return fingerprint;
-            }
-            return null;
+            out.close();
+            final String fingerprintValue=IRODSFilesystem.dataObjectChecksum(conn.getRcComm(), file.getAbsolute());
+            final Checksum fingerprint = Checksum.parse(fingerprintValue);
+            return fingerprint;
         }
-        catch(JargonException e) {
+        catch(IOException | IRODSException e) {
             throw new IRODSExceptionMappingService().map(e);
         }
     }

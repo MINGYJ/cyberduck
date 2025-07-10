@@ -34,32 +34,39 @@ import org.irods.jargon.core.exception.InvalidUserException;
 import org.irods.jargon.core.exception.JargonException;
 import org.irods.irods4j.low_level.api.IRODSException;
 
-public class IRODSExceptionMappingService extends AbstractExceptionMappingService<IRODSException> {
+public class IRODSExceptionMappingService extends AbstractExceptionMappingService<Exception> {
     private static final Logger log = LogManager.getLogger(IRODSExceptionMappingService.class);
 
     @Override
-    public BackgroundException map(final IRODSException e) {
+    public BackgroundException map(final Exception e) {
         log.warn("Map failure {}", e.toString());
         final StringBuilder buffer = new StringBuilder();
         this.append(buffer, e.getMessage());
-        if(e instanceof CatNoAccessException) {
-            return new AccessDeniedException(buffer.toString(), e);
-        }
-        if(e instanceof FileNotFoundException) {
-            return new NotfoundException(buffer.toString(), e);
-        }
-        if(e instanceof DataNotFoundException) {
-            return new NotfoundException(buffer.toString(), e);
-        }
-        if(e instanceof AuthenticationException) {
-            return new LoginFailureException(buffer.toString(), e);
-        }
-        if(e instanceof InvalidUserException) {
-            return new LoginFailureException(buffer.toString(), e);
-        }
-        if(e instanceof InvalidGroupException) {
-            return new LoginFailureException(buffer.toString(), e);
-        }
+//        if(e instanceof CatNoAccessException) {
+//            return new AccessDeniedException(buffer.toString(), e);
+//        }
+//        if(e instanceof FileNotFoundException) {
+//            return new NotfoundException(buffer.toString(), e);
+//        }
+//        if(e instanceof DataNotFoundException) {
+//            return new NotfoundException(buffer.toString(), e);
+//        }
+//        if(e instanceof AuthenticationException) {
+//            return new LoginFailureException(buffer.toString(), e);
+//        }
+//        if(e instanceof InvalidUserException) {
+//            return new LoginFailureException(buffer.toString(), e);
+//        }
+//        if(e instanceof InvalidGroupException) {
+//            return new LoginFailureException(buffer.toString(), e);
+//        }
         return this.wrap(e, buffer);
     }
+    
+//    public BackgroundException map(final IOException e) {
+//        log.warn("Map failure {}", e.toString());
+//        final StringBuilder buffer = new StringBuilder();
+//        this.append(buffer, e.getMessage());
+//        return this.wrap(e, buffer);
+//    }
 }

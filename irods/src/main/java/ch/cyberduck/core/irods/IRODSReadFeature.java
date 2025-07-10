@@ -97,9 +97,8 @@ public class IRODSReadFeature implements Read {
                 return in;
             }
             catch(IOException | IRODSException e) {
-                //throw new IRODSExceptionMappingService().map("Download {0} failed", e, file);
+                throw new IRODSExceptionMappingService().map("Download {0} failed", e, file);
             }
-            return null;
         
     }
 }

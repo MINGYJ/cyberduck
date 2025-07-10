@@ -103,7 +103,7 @@ public class IRODSDownloadFeature implements Download {
              
         }
         catch(IOException | IRODSException e) {
-            //throw new Exception("Download {0} failed", e);
+            throw new IRODSExceptionMappingService().map("Download {0} failed", e);
         }
     }
 

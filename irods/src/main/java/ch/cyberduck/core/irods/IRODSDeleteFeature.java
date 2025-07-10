@@ -24,9 +24,14 @@ import ch.cyberduck.core.exception.NotfoundException;
 import ch.cyberduck.core.features.Delete;
 import ch.cyberduck.core.transfer.TransferStatus;
 
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem.RemoveOptions;
+import org.irods.irods4j.high_level.vfs.ObjectStatus.ObjectType;
+import org.irods.irods4j.low_level.api.IRODSException;
 import org.irods.jargon.core.exception.JargonException;
 import org.irods.jargon.core.pub.io.IRODSFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -56,19 +61,29 @@ public class IRODSDeleteFeature implements Delete {
             }
             deleted.add(file);
             callback.delete(file);
+            final String absolute = file.getAbsolute();
             try {
-                final IRODSFile f = session.getClient().getIRODSFileFactory().instanceIRODSFile(file.getAbsolute());
-                if(!f.exists()) {
-                    throw new NotfoundException(String.format("%s doesn't exist", file.getAbsolute()));
+//                final IRODSFile f = session.getClient().getIRODSFileFactory().instanceIRODSFile(file.getAbsolute());
+//                if(!f.exists()) {
+//                    throw new NotfoundException(String.format("%s doesn't exist", file.getAbsolute()));
+//                }
+            	if (!IRODSFilesystem.exists(this.session.getClient().getRcComm(), absolute)) {
+                    throw new NotfoundException(String.format("%s doesn't exist", absolute));
                 }
-                if(f.isFile()) {
-                    session.getClient().fileDeleteForce(f);
-                }
-                else if(f.isDirectory()) {
-                    session.getClient().directoryDeleteForce(f);
-                }
+//                if(f.isFile()) {
+//                    session.getClient().fileDeleteForce(f);
+//                }
+//                else if(f.isDirectory()) {
+//                    session.getClient().directoryDeleteForce(f);
+//                }
+            	 var status = IRODSFilesystem.status(this.session.getClient().getRcComm(), absolute);
+                 if (status.equals(ObjectType.DATA_OBJECT)) {
+                     IRODSFilesystem.remove(this.session.getClient().getRcComm(), absolute, RemoveOptions.NO_TRASH);
+                 } else if (status.equals(ObjectType.COLLECTION)) {
+                     IRODSFilesystem.removeAll(this.session.getClient().getRcComm(), absolute, RemoveOptions.NO_TRASH);
+                 }
             }
-            catch(JargonException e) {
+            catch(IOException | IRODSException e) {
                 throw new IRODSExceptionMappingService().map("Cannot delete {0}", e, file);
             }
         }

@@ -22,6 +22,11 @@ import ch.cyberduck.core.exception.BackgroundException;
 import ch.cyberduck.core.features.Directory;
 import ch.cyberduck.core.transfer.TransferStatus;
 
+import java.io.IOException;
+
+import org.irods.irods4j.high_level.connection.IRODSConnection;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystemException;
 import org.irods.jargon.core.exception.JargonException;
 import org.irods.jargon.core.pub.IRODSFileSystemAO;
 import org.irods.jargon.core.pub.io.IRODSFile;
@@ -37,12 +42,18 @@ public class IRODSDirectoryFeature implements Directory<Void> {
     @Override
     public Path mkdir(final Path folder, final TransferStatus status) throws BackgroundException {
         try {
-            final IRODSFileSystemAO fs = session.getClient();
-            final IRODSFile f = fs.getIRODSFileFactory().instanceIRODSFile(folder.getAbsolute());
-            fs.mkdir(f, false);
+            final IRODSConnection conn = session.getClient();
+            //final IRODSFile f = fs.getIRODSFileFactory().instanceIRODSFile(folder.getAbsolute());
+            //fs.mkdir(f, false);
+            //return folder;
+            String path = folder.getAbsolute(); // or folder.toString(), depending on your Local class
+            boolean created = IRODSFilesystem.createCollection(conn.getRcComm(), path);
+            if (!created) {
+                throw new IOException("Failed to create collection: " + path);
+            }
             return folder;
         }
-        catch(JargonException e) {
+        catch(IOException | IRODSFilesystemException e) {
             throw new IRODSExceptionMappingService().map("Cannot create folder {0}", e, folder);
         }
     }
