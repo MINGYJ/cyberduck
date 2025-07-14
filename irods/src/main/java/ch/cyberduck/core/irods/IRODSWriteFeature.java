@@ -40,13 +40,13 @@ import org.irods.irods4j.high_level.io.IRODSDataObjectOutputStream;
 import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
 import org.irods.irods4j.low_level.api.GenQuery1Columns;
 import org.irods.irods4j.low_level.api.IRODSException;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.exception.JargonRuntimeException;
-import org.irods.jargon.core.packinstr.DataObjInp;
-import org.irods.jargon.core.pub.IRODSFileSystemAO;
-import org.irods.jargon.core.pub.domain.ObjStat;
-import org.irods.jargon.core.pub.io.IRODSFileOutputStream;
-import org.irods.jargon.core.pub.io.PackingIrodsOutputStream;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.exception.JargonRuntimeException;
+//import org.irods.jargon.core.packinstr.DataObjInp;
+//import org.irods.jargon.core.pub.IRODSFileSystemAO;
+//import org.irods.jargon.core.pub.domain.ObjStat;
+//import org.irods.jargon.core.pub.io.IRODSFileOutputStream;
+//import org.irods.jargon.core.pub.io.PackingIrodsOutputStream;
 
 public class IRODSWriteFeature implements Write<List<String>> {
 
@@ -58,7 +58,6 @@ public class IRODSWriteFeature implements Write<List<String>> {
 
     @Override
     public StatusOutputStream<List<String>> write(final Path file, final TransferStatus status, final ConnectionCallback callback) throws BackgroundException {
-        try {
             try {
                 final IRODSConnection conn = session.getClient();
 //                final IRODSFileOutputStream out = fs.getIRODSFileFactory().instanceIRODSFileOutputStream(
@@ -99,7 +98,7 @@ public class IRODSWriteFeature implements Write<List<String>> {
 								e.printStackTrace();
 							}
                     	}else {
-                    		var input = new GenQuery1QueryArgs();
+                    		GenQuery1QueryArgs input = new GenQuery1QueryArgs();
 
                 			// select COLL_NAME, DATA_NAME, DATA_ACCESS_TIME
                 			input.addColumnToSelectClause(GenQuery1Columns.COL_D_MODIFY_TIME);
@@ -111,12 +110,12 @@ public class IRODSWriteFeature implements Write<List<String>> {
                 			
 
                 			// where COLL_NAME like '/tempZone/home/rods and DATA_NAME = 'atime.txt'
-                			var collNameCondStr = String.format("= '%s'", parentPath);
-                			var dataNameCondStr = String.format("= '%s'", fileName);
+                			String collNameCondStr = String.format("= '%s'", parentPath);
+                			String dataNameCondStr = String.format("= '%s'", fileName);
                 			input.addConditionToWhereClause(GenQuery1Columns.COL_COLL_NAME, collNameCondStr);
                 			input.addConditionToWhereClause(GenQuery1Columns.COL_DATA_NAME, dataNameCondStr);
 
-                			var output = new StringBuilder();
+                			StringBuilder output = new StringBuilder();
 
                 			try {
 								IRODSQuery.executeGenQuery1(conn.getRcComm(), input, row -> {
@@ -131,15 +130,8 @@ public class IRODSWriteFeature implements Write<List<String>> {
                         return status;
                     }
                 };
-            }
-            catch(IOException | IRODSException e) {
-                if(e.getCause() instanceof JargonException) {
-                    throw (JargonException) e.getCause();
-                }
-                throw new DefaultExceptionMappingService().map(e);
-            }
         }
-        catch(JargonException e) {
+        catch(IRODSException | IOException e) {
             throw new IRODSExceptionMappingService().map("Uploading {0} failed", e, file);
         }
     }

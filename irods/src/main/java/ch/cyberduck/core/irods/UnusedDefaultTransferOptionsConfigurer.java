@@ -22,7 +22,7 @@ import ch.cyberduck.core.preferences.PreferencesFactory;
 
 import org.irods.jargon.core.packinstr.TransferOptions;
 
-public class DefaultTransferOptionsConfigurer {
+public class UnusedDefaultTransferOptionsConfigurer {
 
     private final Preferences preferences = PreferencesFactory.get();
 

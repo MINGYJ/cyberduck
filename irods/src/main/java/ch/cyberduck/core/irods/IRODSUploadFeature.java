@@ -42,19 +42,20 @@ import org.irods.irods4j.high_level.connection.IRODSConnection;
 import org.irods.irods4j.high_level.io.IRODSDataObjectOutputStream;
 import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
 import org.irods.irods4j.low_level.api.IRODSException;
-import org.irods.jargon.core.checksum.ChecksumValue;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.packinstr.TransferOptions;
-import org.irods.jargon.core.pub.DataObjectChecksumUtilitiesAO;
-import org.irods.jargon.core.pub.DataTransferOperations;
-import org.irods.jargon.core.pub.IRODSFileSystemAO;
-import org.irods.jargon.core.pub.io.IRODSFile;
-import org.irods.jargon.core.transfer.DefaultTransferControlBlock;
-import org.irods.jargon.core.transfer.TransferControlBlock;
+//import org.irods.jargon.core.checksum.ChecksumValue;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.packinstr.TransferOptions;
+//import org.irods.jargon.core.pub.DataObjectChecksumUtilitiesAO;
+//import org.irods.jargon.core.pub.DataTransferOperations;
+//import org.irods.jargon.core.pub.IRODSFileSystemAO;
+//import org.irods.jargon.core.pub.io.IRODSFile;
+//import org.irods.jargon.core.transfer.DefaultTransferControlBlock;
+//import org.irods.jargon.core.transfer.TransferControlBlock;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 
 public class IRODSUploadFeature implements Upload<Checksum> {
@@ -112,7 +113,7 @@ public class IRODSUploadFeature implements Upload<Checksum> {
 //                    }
 //                }
         	final IRODSConnection conn=session.getClient();
-        	var out = new IRODSDataObjectOutputStream();
+        	IRODSDataObjectOutputStream out = new IRODSDataObjectOutputStream();
         	InputStream localIn = local.getInputStream();
         	out.open(session.getClient().getRcComm(), file.getAbsolute(), truncate, append);
         	byte[] buffer = new byte[PreferencesFactory.get().getInteger("connection.chunksize")]; //buffer

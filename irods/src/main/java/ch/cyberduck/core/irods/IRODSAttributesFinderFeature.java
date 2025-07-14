@@ -39,10 +39,10 @@ import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
 import org.irods.irods4j.high_level.vfs.ObjectStatus;
 import org.irods.irods4j.low_level.api.GenQuery1Columns;
 import org.irods.irods4j.low_level.api.IRODSException;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.pub.IRODSFileSystemAO;
-import org.irods.jargon.core.pub.domain.ObjStat;
-import org.irods.jargon.core.pub.io.IRODSFile;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.pub.IRODSFileSystemAO;
+//import org.irods.jargon.core.pub.domain.ObjStat;
+//import org.irods.jargon.core.pub.io.IRODSFile;
 
 public class IRODSAttributesFinderFeature implements AttributesFinder, AttributesAdapter<List<String>> {
 
@@ -71,7 +71,7 @@ public class IRODSAttributesFinderFeature implements AttributesFinder, Attribute
             	List<String> row = rows.get(0);
             	attributes[0]=toAttributes(row);
         	}else {
-        		var input = new GenQuery1QueryArgs();
+        		GenQuery1QueryArgs input = new GenQuery1QueryArgs();
 
     			// select COLL_NAME, DATA_NAME, DATA_ACCESS_TIME
     			input.addColumnToSelectClause(GenQuery1Columns.COL_D_MODIFY_TIME);
@@ -83,12 +83,12 @@ public class IRODSAttributesFinderFeature implements AttributesFinder, Attribute
     			
 
     			// where COLL_NAME like '/tempZone/home/rods and DATA_NAME = 'atime.txt'
-    			var collNameCondStr = String.format("= '%s'", parentPath);
-    			var dataNameCondStr = String.format("= '%s'", fileName);
+    			String collNameCondStr = String.format("= '%s'", parentPath);
+    			String dataNameCondStr = String.format("= '%s'", fileName);
     			input.addConditionToWhereClause(GenQuery1Columns.COL_COLL_NAME, collNameCondStr);
     			input.addConditionToWhereClause(GenQuery1Columns.COL_DATA_NAME, dataNameCondStr);
 
-    			var output = new StringBuilder();
+    			StringBuilder output = new StringBuilder();
 
     			IRODSQuery.executeGenQuery1(conn.getRcComm(), input, row -> {
     				attributes[0]=toAttributes(row);
@@ -104,6 +104,7 @@ public class IRODSAttributesFinderFeature implements AttributesFinder, Attribute
 
     @Override
     public PathAttributes toAttributes(final List<String> row) {
+    	final IRODSConnection conn = session.getClient();
         final PathAttributes attributes = new PathAttributes();
         attributes.setModificationDate(Long.parseLong(row.get(0)) * 1000); // seconds to ms
     	attributes.setCreationDate(Long.parseLong(row.get(1)) * 1000);
@@ -113,7 +114,8 @@ public class IRODSAttributesFinderFeature implements AttributesFinder, Attribute
     	    attributes.setChecksum(Checksum.parse(checksum));
     	}
 
-    	attributes.setOwner(row.get(4));
+    	//attributes.setOwner(row.get(4));
+    	attributes.setOwner(conn.getRcComm().relVersion);
     	attributes.setGroup(row.get(5));
         return attributes;
     }

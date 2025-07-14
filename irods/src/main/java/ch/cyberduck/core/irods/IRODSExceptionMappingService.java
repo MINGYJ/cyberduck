@@ -25,13 +25,13 @@ import ch.cyberduck.core.exception.NotfoundException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.irods.jargon.core.exception.AuthenticationException;
-import org.irods.jargon.core.exception.CatNoAccessException;
-import org.irods.jargon.core.exception.DataNotFoundException;
-import org.irods.jargon.core.exception.FileNotFoundException;
-import org.irods.jargon.core.exception.InvalidGroupException;
-import org.irods.jargon.core.exception.InvalidUserException;
-import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.exception.AuthenticationException;
+//import org.irods.jargon.core.exception.CatNoAccessException;
+//import org.irods.jargon.core.exception.DataNotFoundException;
+//import org.irods.jargon.core.exception.FileNotFoundException;
+//import org.irods.jargon.core.exception.InvalidGroupException;
+//import org.irods.jargon.core.exception.InvalidUserException;
+//import org.irods.jargon.core.exception.JargonException;
 import org.irods.irods4j.low_level.api.IRODSException;
 
 public class IRODSExceptionMappingService extends AbstractExceptionMappingService<Exception> {

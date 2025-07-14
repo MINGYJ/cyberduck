@@ -44,10 +44,10 @@ import org.irods.irods4j.high_level.vfs.ObjectStatus.ObjectType;
 import org.irods.irods4j.low_level.api.GenQuery1Columns;
 import org.irods.irods4j.low_level.api.IRODSException;
 import org.irods.irods4j.low_level.api.IRODSKeywords;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.pub.IRODSFileSystemAO;
-import org.irods.jargon.core.pub.domain.ObjStat;
-import org.irods.jargon.core.pub.io.IRODSFile;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.pub.IRODSFileSystemAO;
+//import org.irods.jargon.core.pub.domain.ObjStat;
+//import org.irods.jargon.core.pub.io.IRODSFile;
 
 
 import java.io.File;
@@ -118,7 +118,7 @@ public class IRODSListService implements ListService {
                 	attributes.setOwner(row.get(4));
                 	attributes.setGroup(row.get(5));
             	}else {
-            		var input = new GenQuery1QueryArgs();
+            		GenQuery1QueryArgs input = new GenQuery1QueryArgs();
 
         			// select COLL_NAME, DATA_NAME, DATA_ACCESS_TIME
         			input.addColumnToSelectClause(GenQuery1Columns.COL_D_MODIFY_TIME);
@@ -130,12 +130,12 @@ public class IRODSListService implements ListService {
         			
 
         			// where COLL_NAME like '/tempZone/home/rods and DATA_NAME = 'atime.txt'
-        			var collNameCondStr = String.format("= '%s'", parentPath);
-        			var dataNameCondStr = String.format("= '%s'", fileName);
+        			String collNameCondStr = String.format("= '%s'", parentPath);
+        			String dataNameCondStr = String.format("= '%s'", fileName);
         			input.addConditionToWhereClause(GenQuery1Columns.COL_COLL_NAME, collNameCondStr);
         			input.addConditionToWhereClause(GenQuery1Columns.COL_DATA_NAME, dataNameCondStr);
 
-        			var output = new StringBuilder();
+        			StringBuilder output = new StringBuilder();
 
         			IRODSQuery.executeGenQuery1(conn.getRcComm(), input, row -> {
                     	attributes.setModificationDate(Long.parseLong(row.get(0)) * 1000); // seconds to ms

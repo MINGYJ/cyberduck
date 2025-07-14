@@ -26,10 +26,11 @@ import ch.cyberduck.core.transfer.TransferStatus;
 
 import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
 import org.irods.irods4j.high_level.vfs.IRODSFilesystem.RemoveOptions;
+import org.irods.irods4j.high_level.vfs.ObjectStatus;
 import org.irods.irods4j.high_level.vfs.ObjectStatus.ObjectType;
 import org.irods.irods4j.low_level.api.IRODSException;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.pub.io.IRODSFile;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.pub.io.IRODSFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class IRODSDeleteFeature implements Delete {
 //                else if(f.isDirectory()) {
 //                    session.getClient().directoryDeleteForce(f);
 //                }
-            	 var status = IRODSFilesystem.status(this.session.getClient().getRcComm(), absolute);
+            	ObjectStatus status = IRODSFilesystem.status(this.session.getClient().getRcComm(), absolute);
                  if (status.equals(ObjectType.DATA_OBJECT)) {
                      IRODSFilesystem.remove(this.session.getClient().getRcComm(), absolute, RemoveOptions.NO_TRASH);
                  } else if (status.equals(ObjectType.COLLECTION)) {

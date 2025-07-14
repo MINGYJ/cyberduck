@@ -57,14 +57,14 @@ import org.apache.logging.log4j.Logger;
 
 import org.irods.irods4j.high_level.connection.*;
 import org.irods.irods4j.low_level.api.IRODSApi.ConnectionOptions;
-import org.irods.jargon.core.connection.AuthScheme;
-import org.irods.jargon.core.connection.IRODSAccount;
-import org.irods.jargon.core.connection.SettableJargonProperties;
-import org.irods.jargon.core.connection.auth.AuthResponse;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.pub.IRODSAccessObjectFactory;
-import org.irods.jargon.core.pub.IRODSFileSystem;
-import org.irods.jargon.core.pub.IRODSFileSystemAO;
+//import org.irods.jargon.core.connection.AuthScheme;
+//import org.irods.jargon.core.connection.IRODSAccount;
+//import org.irods.jargon.core.connection.SettableJargonProperties;
+//import org.irods.jargon.core.connection.auth.AuthResponse;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.pub.IRODSAccessObjectFactory;
+//import org.irods.jargon.core.pub.IRODSFileSystem;
+//import org.irods.jargon.core.pub.IRODSFileSystemAO;
 
 import java.net.URI;
 import java.net.URISyntaxException;

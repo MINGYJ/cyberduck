@@ -27,14 +27,14 @@ import org.apache.logging.log4j.Logger;
 import org.irods.jargon.core.transfer.TransferControlBlock;
 import org.irods.jargon.core.transfer.TransferStatusCallbackListener;
 
-public class DefaultTransferStatusCallbackListener implements TransferStatusCallbackListener {
-    private static final Logger log = LogManager.getLogger(DefaultTransferStatusCallbackListener.class);
+public class UnusedDefaultTransferStatusCallbackListener implements TransferStatusCallbackListener {
+    private static final Logger log = LogManager.getLogger(UnusedDefaultTransferStatusCallbackListener.class);
 
     private final TransferStatus status;
     private final BytecountStreamListener listener;
     private final TransferControlBlock block;
 
-    public DefaultTransferStatusCallbackListener(final TransferStatus status, final StreamListener listener,
+    public UnusedDefaultTransferStatusCallbackListener(final TransferStatus status, final StreamListener listener,
                                                  final TransferControlBlock block) {
         this.status = status;
         this.listener = new BytecountStreamListener(listener);

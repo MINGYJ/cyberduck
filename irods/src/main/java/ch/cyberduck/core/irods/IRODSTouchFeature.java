@@ -27,9 +27,9 @@ import java.io.IOException;
 import org.irods.irods4j.high_level.connection.IRODSConnection;
 import org.irods.irods4j.high_level.io.IRODSDataObjectOutputStream;
 import org.irods.irods4j.low_level.api.IRODSException;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.packinstr.DataObjInp;
-import org.irods.jargon.core.pub.IRODSFileSystemAO;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.packinstr.DataObjInp;
+//import org.irods.jargon.core.pub.IRODSFileSystemAO;
 
 public class IRODSTouchFeature implements Touch {
 

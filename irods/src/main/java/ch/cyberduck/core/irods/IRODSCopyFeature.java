@@ -26,17 +26,18 @@ import ch.cyberduck.core.preferences.HostPreferencesFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.irods.irods4j.high_level.connection.IRODSConnection;
+import org.irods.irods4j.high_level.vfs.CollectionEntry;
 import org.irods.irods4j.high_level.vfs.IRODSCollectionIterator;
 import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
 import org.irods.irods4j.high_level.vfs.ObjectStatus;
 import org.irods.irods4j.low_level.api.IRODSApi.RcComm;
 import org.irods.irods4j.low_level.api.IRODSException;
-import org.irods.jargon.core.exception.JargonException;
-import org.irods.jargon.core.pub.DataTransferOperations;
-import org.irods.jargon.core.pub.IRODSFileSystemAO;
-import org.irods.jargon.core.transfer.DefaultTransferControlBlock;
-import org.irods.jargon.core.transfer.TransferStatus;
-import org.irods.jargon.core.transfer.TransferStatusCallbackListener;
+//import org.irods.jargon.core.exception.JargonException;
+//import org.irods.jargon.core.pub.DataTransferOperations;
+//import org.irods.jargon.core.pub.IRODSFileSystemAO;
+//import org.irods.jargon.core.transfer.DefaultTransferControlBlock;
+//import org.irods.jargon.core.transfer.TransferStatus;
+//import org.irods.jargon.core.transfer.TransferStatusCallbackListener;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -102,7 +103,7 @@ public class IRODSCopyFeature implements Copy {
         }
 
         // Recursively iterate through the source collection
-        for (var entry : new IRODSCollectionIterator(rcComm, source)) {
+        for (CollectionEntry entry : new IRODSCollectionIterator(rcComm, source)) {
             String relative = entry.path().substring(source.length()); // relative path from source
             String targetPath = target + relative;
 
