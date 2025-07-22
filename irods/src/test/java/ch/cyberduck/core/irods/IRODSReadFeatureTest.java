@@ -43,7 +43,7 @@ import ch.cyberduck.test.VaultTest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.irods.jargon.core.pub.domain.ObjStat;
+//import org.irods.jargon.core.pub.domain.ObjStat;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
