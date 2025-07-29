@@ -85,21 +85,26 @@ public class IRODSSession extends SSLSession<IRODSConnection> {
     @Override
     protected IRODSConnection connect(final ProxyFinder proxy, final HostKeyCallback key, final LoginCallback prompt, final CancelCallback cancel) throws BackgroundException {
         try {
-            final String host = this.host.getHostname();
-            final int port = this.host.getPort();
-            final Credentials credentials = this.host.getCredentials();
-            final String zone = getRegion();
+//            final String host = this.host.getHostname();
+//            final int port = this.host.getPort();
+//            final Credentials credentials = this.host.getCredentials();
+//            final String zone = getRegion();
+            final String host = "localhost";
+            final int port = 1247;
+            final String zone = "tempZone";
             
             ConnectionOptions options=new ConnectionOptions();
          
             
             IRODSConnection conn = new IRODSConnection(options);
-            conn.connect(host, port, new QualifiedUsername(credentials.getUsername(), zone));
+            //conn.connect(host, port, new QualifiedUsername(credentials.getUsername(), zone));
+            conn.connect(host, port, new QualifiedUsername("rods", zone));
             
-        
+            
             return conn;
         } catch (Exception e) {
-            throw new BackgroundException("Failed to connect to iRODS", e);
+        	String msg = String.format("exception=[%s], host=[%s], port=[%d], username=[%s], zone=[%s]", e.getMessage(), this.host.getHostname(),this.host.getPort(), this.host.getCredentials().getUsername(),getRegion());
+            throw new BackgroundException("Failed to connect to iRODS - "+ msg,e);
         }
     }
 
@@ -141,16 +146,19 @@ public class IRODSSession extends SSLSession<IRODSConnection> {
     public void login(final LoginCallback prompt, final CancelCallback cancel) throws BackgroundException {
     	try {
             final Credentials credentials = host.getCredentials();
-            final String username = credentials.getUsername();
-            final String password = credentials.getPassword();
-            final String zone = this.getRegion();
+//            final String username = credentials.getUsername();
+//            final String password = credentials.getPassword();
+//            final String zone = this.getRegion();
+            final String username = "rods";
+            final String password = "rods";
+            final String zone = "tempZone";
 
             // Optional: Support different auth schemes like PAM or GSI
-            final String authScheme = StringUtils.defaultIfBlank(
-                host.getProtocol().getAuthorization(),
-                "native"
-            );
-            
+//            final String authScheme = StringUtils.defaultIfBlank(
+//                host.getProtocol().getAuthorization(),
+//                "native"
+//            );
+            final String authScheme = "native";
             client.authenticate(authScheme, password);
 
             log.debug("Authenticated to iRODS as {}", username);

@@ -32,7 +32,7 @@ public class ChunkWorker implements Runnable{
 		try {
 			if (stream instanceof IRODSDataObjectInputStream) {
 				IRODSDataObjectInputStream in = (IRODSDataObjectInputStream) (stream);
-				in.seek((int) offset, SeekDirection.BEGIN);
+				in.seek((int) offset, SeekDirection.CURRENT);
 				long remaining = chunkSize;
 				while (remaining > 0) {
 					int readLength = (int) Math.min(buffer.length, remaining);
@@ -43,7 +43,7 @@ public class ChunkWorker implements Runnable{
 				
 			}else if (stream instanceof IRODSDataObjectOutputStream) {
 				IRODSDataObjectOutputStream out = (IRODSDataObjectOutputStream) (stream);
-				out.seek((int) offset, SeekDirection.BEGIN);
+				out.seek((int) offset, SeekDirection.CURRENT);
 				long remaining = chunkSize;
                 while (remaining > 0) {
                     int writeLength = (int) Math.min(buffer.length, remaining);
