@@ -1,5 +1,11 @@
 package ch.cyberduck.core.irods;
 
+import java.io.IOException;
+
+import org.irods.irods4j.high_level.connection.IRODSConnection;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
+import org.irods.irods4j.low_level.api.IRODSException;
+
 /*
  * Copyright (c) 2002-2015 David Kocher. All rights reserved.
  * http://cyberduck.ch/
@@ -21,12 +27,6 @@ import ch.cyberduck.core.ListProgressListener;
 import ch.cyberduck.core.Path;
 import ch.cyberduck.core.exception.BackgroundException;
 import ch.cyberduck.core.features.Find;
-
-import java.io.IOException;
-
-import org.irods.irods4j.high_level.connection.IRODSConnection;
-import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
-import org.irods.irods4j.low_level.api.IRODSException;
 
 public class IRODSFindFeature implements Find {
 

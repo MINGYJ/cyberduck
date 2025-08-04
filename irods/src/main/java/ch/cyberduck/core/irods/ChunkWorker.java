@@ -3,7 +3,6 @@ package ch.cyberduck.core.irods;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.irods.irods4j.high_level.connection.IRODSConnectionPool.PoolConnection;
 import org.irods.irods4j.high_level.io.IRODSDataObjectInputStream;
 import org.irods.irods4j.high_level.io.IRODSDataObjectOutputStream;
 import org.irods.irods4j.high_level.io.IRODSDataObjectStream.SeekDirection;
@@ -22,13 +21,11 @@ public class ChunkWorker implements Runnable{
 		this.chunkSize=chunkSize;
 		this.buffer=new byte[bufferSize];
 		
-		//stream.seek((int)offset, SeekDirection.BEGIN);
+
 		file.seek(offset);
 	}
 	@Override
 	public void run(){
-		// TODO Auto-generated method stub
-		//
 		try {
 			if (stream instanceof IRODSDataObjectInputStream) {
 				IRODSDataObjectInputStream in = (IRODSDataObjectInputStream) (stream);
@@ -58,12 +55,11 @@ public class ChunkWorker implements Runnable{
 		} catch (IOException | IRODSException e) {
 			e.printStackTrace();
 		}
-//		try {
-//			close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void close() throws IOException {

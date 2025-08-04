@@ -1,5 +1,18 @@
 package ch.cyberduck.core.irods;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.irods.irods4j.common.Versioning;
+import org.irods.irods4j.high_level.catalog.IRODSQuery;
+import org.irods.irods4j.high_level.catalog.IRODSQuery.GenQuery1QueryArgs;
+import org.irods.irods4j.high_level.connection.IRODSConnection;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
+import org.irods.irods4j.low_level.api.GenQuery1Columns;
+import org.irods.irods4j.low_level.api.IRODSException;
+
 /*
  * Copyright (c) 2002-2016 iterate GmbH. All rights reserved.
  * https://cyberduck.io/
@@ -24,25 +37,6 @@ import ch.cyberduck.core.features.AttributesAdapter;
 import ch.cyberduck.core.features.AttributesFinder;
 import ch.cyberduck.core.io.Checksum;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.irods.irods4j.common.Versioning;
-import org.irods.irods4j.high_level.catalog.IRODSQuery;
-import org.irods.irods4j.high_level.catalog.IRODSQuery.GenQuery1QueryArgs;
-import org.irods.irods4j.high_level.connection.IRODSConnection;
-import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
-import org.irods.irods4j.high_level.vfs.ObjectStatus;
-import org.irods.irods4j.low_level.api.GenQuery1Columns;
-import org.irods.irods4j.low_level.api.IRODSException;
-//import org.irods.jargon.core.exception.JargonException;
-//import org.irods.jargon.core.pub.IRODSFileSystemAO;
-//import org.irods.jargon.core.pub.domain.ObjStat;
-//import org.irods.jargon.core.pub.io.IRODSFile;
 
 public class IRODSAttributesFinderFeature implements AttributesFinder, AttributesAdapter<List<String>> {
 
@@ -60,8 +54,6 @@ public class IRODSAttributesFinderFeature implements AttributesFinder, Attribute
             if(!IRODSFilesystem.exists(this.session.getClient().getRcComm(), file.getAbsolute())) {
                 throw new NotfoundException(file.getAbsolute());
             }
-//            final ObjStat stats = fs.getObjStat(f.getAbsolutePath());
-//            return this.toAttributes(stats);
         	String logicalPath = file.getAbsolute();
         	String parentPath = FilenameUtils.getFullPathNoEndSeparator(logicalPath);
         	String fileName = FilenameUtils.getName(logicalPath);
@@ -114,7 +106,6 @@ public class IRODSAttributesFinderFeature implements AttributesFinder, Attribute
     	    attributes.setChecksum(Checksum.parse(checksum));
     	}
 
-    	//attributes.setOwner(row.get(4));
     	attributes.setOwner(conn.getRcComm().relVersion);
     	attributes.setGroup(row.get(5));
         return attributes;

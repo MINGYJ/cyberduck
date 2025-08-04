@@ -1,5 +1,13 @@
 package ch.cyberduck.core.irods;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
+
+import org.irods.irods4j.high_level.connection.IRODSConnection;
+import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
+import org.irods.irods4j.low_level.api.IRODSException;
+
 /*
  * Copyright (c) 2002-2015 David Kocher. All rights reserved.
  * http://cyberduck.ch/
@@ -24,17 +32,6 @@ import ch.cyberduck.core.exception.NotfoundException;
 import ch.cyberduck.core.features.Delete;
 import ch.cyberduck.core.features.Move;
 import ch.cyberduck.core.transfer.TransferStatus;
-
-import org.irods.irods4j.high_level.connection.IRODSConnection;
-import org.irods.irods4j.high_level.vfs.IRODSFilesystem;
-import org.irods.irods4j.low_level.api.IRODSException;
-//import org.irods.jargon.core.exception.JargonException;
-//import org.irods.jargon.core.pub.IRODSFileSystemAO;
-//import org.irods.jargon.core.pub.io.IRODSFile;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.EnumSet;
 
 public class IRODSMoveFeature implements Move {
 
