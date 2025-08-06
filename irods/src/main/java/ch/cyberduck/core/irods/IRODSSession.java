@@ -73,23 +73,24 @@ public class IRODSSession extends SSLSession<IRODSConnection> {
     }
 
     @Override
-    protected IRODSConnection connect(final ProxyFinder proxy, final HostKeyCallback key, final LoginCallback prompt, final CancelCallback cancel) throws BackgroundException {
+    protected IRODSConnection connect(final ProxyFinder proxy, final HostKeyCallback key, final LoginCallback prompt, final CancelCallback cancel) 
+    		throws BackgroundException {
         try {
-            final String host = "localhost";
-            final int port = 1247;
-            final String zone = "tempZone";
+        	final String host = this.host.getHostname();
+        	final int port = this.host.getPort();
+        	final Credentials credentials = this.host.getCredentials();
+        	final String zone = getRegion();
             
             ConnectionOptions options=new ConnectionOptions();
          
             
             IRODSConnection conn = new IRODSConnection(options);
-            conn.connect(host, port, new QualifiedUsername("rods", zone));
+            conn.connect(host, port, new QualifiedUsername(credentials.getUsername(), zone));
             
             
             return conn;
         } catch (Exception e) {
-        	String msg = String.format("exception=[%s], host=[%s], port=[%d], username=[%s], zone=[%s]", e.getMessage(), this.host.getHostname(),this.host.getPort(), this.host.getCredentials().getUsername(),getRegion());
-            throw new BackgroundException("Failed to connect to iRODS - "+ msg,e);
+            throw new BackgroundException("Failed to connect to iRODS",e);
         }
     }
 
